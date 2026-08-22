@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PlatformService.Data;
+using PlatformService.Repository;
 
 namespace PlatformService.Bootstrapping
 {
@@ -9,6 +10,8 @@ namespace PlatformService.Bootstrapping
         {
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseInMemoryDatabase("InMem"));
+
+            builder.Services.AddScoped<IPlatformRepository, PlatformRepository>();
 
             // Add services to the container.
             builder.Services.AddControllers();
