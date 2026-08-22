@@ -28,6 +28,7 @@ namespace PlatformService.Bootstrapping
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
+                app.PrepPopulation(); // Seed the database with initial data
             }
 
             app.UseSwagger();
