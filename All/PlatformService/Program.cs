@@ -1,4 +1,6 @@
 
+using PlatformService.Bootstrapping;
+
 namespace PlatformService
 {
     public class Program
@@ -6,27 +8,13 @@ namespace PlatformService
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
-            // Add services to the container.
-
-            builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
+            //configure services
+            builder.ConfigureServices();
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.MapOpenApi();
-            }
-
-            app.UseHttpsRedirection();
-
-            app.UseAuthorization();
-
-
-            app.MapControllers();
+            //configure to build
+            app.Configure();
 
             app.Run();
         }
