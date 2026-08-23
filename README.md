@@ -15,5 +15,6 @@ Build Platform Service in microservice architecture
 	- Create db context for Platform service and configure it to use in-memory database first for development and SQL Server for production
 	- Create a repository for Platform service to handle data access (interface and implementation)
 	- Create Seed data for Platform service to populate the database with initial data
+	- Create Dtos (platformCreateDto, platformReadDto)for Platform service to define the data transfer objects for API requests and responses
 2. Command service
 	- 
