@@ -15,6 +15,10 @@ namespace PlatformService.Bootstrapping
 
             // Add services to the container.
             builder.Services.AddControllers();
+
+            //add automapper
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
