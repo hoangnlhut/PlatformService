@@ -18,6 +18,7 @@ Build Platform Service in microservice architecture
 	- Create Dtos (platformCreateDto, platformReadDto)for Platform service to define the data transfer objects for API requests and responses
 	- Config ure AutoMapper for Platform service to map between entity models and Dtos
 	- Create a controller for Platform service to handle API requests and responses
+	- Add Dockerfile 
 
 2. Command service
 	- 
