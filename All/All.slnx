@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="CommandService/CommandService.csproj" Id="a32e6d3a-c7ed-457b-8fa1-1c001847aa83" />
   <Project Path="PlatformService/PlatformService.csproj" />
 </Solution>
