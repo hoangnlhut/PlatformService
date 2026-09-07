@@ -15,5 +15,7 @@ spec:
       containers:
         - name: platformservice
           image: hoangnguyen260189/platformservice:latest
+          ports:
+            - containerPort: 8080
           
     
