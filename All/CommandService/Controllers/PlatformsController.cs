@@ -17,16 +17,8 @@ namespace CommandService.Controllers
             _mapper = mapper;
         }
 
-        //// GET: api/Platforms
-        //[HttpGet]
-        //public ActionResult<IEnumerable<PlatformReadDto>> GetPlatforms()
-        //{
-        //    var platforms = _repository.GetAll();
-        //    return Ok(_mapper.Map<IEnumerable<PlatformReadDto>>(platforms));
-        //}
 
         [HttpPost]
-        [Route("test")]
         public ActionResult Test()
         {
             Console.WriteLine("Command Service is up and running!");

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PlatformService.Data;
 using PlatformService.Repository;
+using PlatformService.SyncDataServices.Http;
 
 namespace PlatformService.Bootstrapping
 {
@@ -13,6 +14,8 @@ namespace PlatformService.Bootstrapping
 
             builder.Services.AddScoped<IPlatformRepository, PlatformRepository>();
 
+            builder.Services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>();
+
             // Add services to the container.
             builder.Services.AddControllers();
 
@@ -24,6 +27,8 @@ namespace PlatformService.Bootstrapping
 
             //Register Swagger generator services
             builder.Services.AddSwaggerGen();
+
+            Console.WriteLine($"--> Configuration CommandService Endpoint: {builder.Configuration["CommandService"]}");
         }
 
         public static void Configure(this WebApplication app)
