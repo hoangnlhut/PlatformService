@@ -11,4 +11,4 @@ spec:
       protocol: TCP
       port: 80  # Port của Service (bên trong Cluster)
       targetPort: 8080  # Port của Container (.NET 9)
-      nodePort: 30080  # port mở trên Node — phải nằm trong range 30000-32767
+      # nodePort: 30080  # port mở trên Node — phải nằm trong range 30000-32767
