@@ -4,7 +4,8 @@ metadata:
   name: mssql-claim
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
+  storageClassName: hostpath
   resources:
     requests:
-      storage: 200Mi
+      storage: 5Gi
