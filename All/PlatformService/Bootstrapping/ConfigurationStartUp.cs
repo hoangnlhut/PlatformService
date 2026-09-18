@@ -9,8 +9,21 @@ namespace PlatformService.Bootstrapping
     {
         public static void ConfigureServices(this IHostApplicationBuilder builder)
         {
-            builder.Services.AddDbContext<AppDbContext>(options =>
-                options.UseInMemoryDatabase("InMem"));
+            if(builder.Environment.IsProduction())
+            {
+                var connectionString = builder.Configuration.GetConnectionString("PlatformsConn");
+                Console.WriteLine($"--> Using SqlServer Db with connection string: {connectionString}");
+
+                // Register DbContext with SQL Server
+                builder.Services.AddDbContext<AppDbContext>(options =>
+                    options.UseSqlServer(connectionString));
+            }
+            else
+            {
+                Console.WriteLine("--> Using InMem Db");
+                builder.Services.AddDbContext<AppDbContext>(opt =>
+                    opt.UseInMemoryDatabase("InMem"));
+            }
 
             builder.Services.AddScoped<IPlatformRepository, PlatformRepository>();
 
@@ -37,7 +50,6 @@ namespace PlatformService.Bootstrapping
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
-                app.PrepPopulation(); // Seed the database with initial data
             }
 
             app.UseSwagger();
@@ -49,6 +61,8 @@ namespace PlatformService.Bootstrapping
 
 
             app.MapControllers();
+
+            app.PrepPopulation(); // Seed the database with initial data
         }
     }
 }

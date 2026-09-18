@@ -59,7 +59,7 @@ namespace PlatformService.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Could not send SendPlatformToCommand: {ex.Message}");
+                Console.WriteLine($"Could not send SendPlatformToCommand: {ex.Message} - {ex.InnerException?.Message ?? "No inner exception"}");
             }
            
             return CreatedAtRoute(nameof(GetPlatformById), new { id = platformReadDto.Id }, platformReadDto);
