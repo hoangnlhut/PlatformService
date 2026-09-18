@@ -6,11 +6,6 @@ namespace CommandService.Bootstrapping
     {
         public static void ConfigureServices(this IHostApplicationBuilder builder)
         {
-            //builder.Services.AddDbContext<AppDbContext>(options =>
-            //    options.UseInMemoryDatabase("InMem"));
-
-            //builder.Services.AddScoped<IPlatformRepository, PlatformRepository>();
-
             // Add services to the container.
             builder.Services.AddControllers();
 
@@ -30,7 +25,6 @@ namespace CommandService.Bootstrapping
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
-                //app.PrepPopulation(); // Seed the database with initial data
             }
 
             app.UseSwagger();
