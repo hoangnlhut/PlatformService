@@ -68,11 +68,3 @@ spec:
       targetPort: 1433  # Port của Container (SQL Server)
       # nodePort: 30433  # Port của Node (bên ngoài Cluster)
 
-# ---
-# apiVersion: v1
-# kind: Secret
-# metadata:
-#   name: mssql
-# type: Opaque
-# stringData:
-#   SA_PASSWORD: "..."
