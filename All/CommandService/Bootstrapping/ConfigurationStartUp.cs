@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CommandService.Data;
+using CommandService.Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace CommandService.Bootstrapping
 {
@@ -6,6 +8,11 @@ namespace CommandService.Bootstrapping
     {
         public static void ConfigureServices(this IHostApplicationBuilder builder)
         {
+            //use memory database
+            builder.Services.AddDbContext<AppDbContext>(opt => opt.UseInMemoryDatabase("InMem"));
+
+            builder.Services.AddScoped<ICommandRepository, CommandRepository>();
+
             // Add services to the container.
             builder.Services.AddControllers();
 
