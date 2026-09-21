@@ -10,6 +10,7 @@ namespace CommandService.Mappers
         {
             // source -> target
             CreateMap<Platform, PlatformReadDto>();
+            CreateMap<PlatformCreateDto, Platform>();
         }
     }
 }
