@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template: 
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      containers:
+      - name: rabbitmq
+        image: rabbitmq:3-management
+        ports:
+        - containerPort: 5672
+          name: rbmq-msg-port #message port for RabbitMQ
+        - containerPort: 15672
+          name: rbmq-mng-port #management port for RabbitMQ
+
+# Cluster IP Service for rabbitmq for communication with other services in the cluster
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: rabbitmq
+  ports:
+    - name: rbmq-mng-port
+      protocol: TCP
+      port: 15672  # Port của Service (bên trong Cluster)
+      targetPort: 15672  # Port của Container (RabbitMQ)
+    - name: rbmq-msg-port
+      protocol: TCP
+      port: 5672  # Port của Service (bên trong Cluster)
+      targetPort: 5672  # Port của Container (RabbitMQ) 
+
+
+# Load Balancer Service for rabbitmq for communication with other services outside the cluster
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq-loadbalancer
+spec:
+  type: LoadBalancer
+  selector:
+    app: rabbitmq
+  ports:
+    - name: rbmq-mng-port
+      protocol: TCP
+      port: 15672  # Port của Service (bên trong Cluster)
+      targetPort: 15672  # Port của Container (RabbitMQ)
+    - name: rbmq-msg-port
+      protocol: TCP
+      port: 5672  # Port của Service (bên trong Cluster)
+      targetPort: 5672  # Port của Container (RabbitMQ) 
