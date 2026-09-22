@@ -12,6 +12,7 @@ namespace PlatformService.Mappers
             CreateMap<Platform, PlatformReadDto>();
 
             CreateMap<PlatformCreateDto, Platform>();
+            CreateMap<PlatformReadDto, PlatformPublishedDto>();
         }
     }
 }
