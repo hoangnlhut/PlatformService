@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PlatformService.AsyncDataServices;
 using PlatformService.Data;
 using PlatformService.Repository;
 using PlatformService.SyncDataServices.Http;
@@ -29,6 +30,17 @@ namespace PlatformService.Bootstrapping
 
             builder.Services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>();
 
+            builder.Services.AddSingleton<RabbitMqConnectionProvider>(async serviceProvider =>
+            {
+                var config = serviceProvider.GetRequiredService<IConfiguration>();
+                var client = new RabbitMqConnectionProvider(config);
+                await client.GetConnectionAsync();
+                return client;
+            });
+
+            builder.Services.AddSingleton<IMessageBusClient, MessageBusClient>();
+
+           
             // Add services to the container.
             builder.Services.AddControllers();
 
