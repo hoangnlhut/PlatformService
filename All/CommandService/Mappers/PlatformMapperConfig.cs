@@ -11,6 +11,10 @@ namespace CommandService.Mappers
             // source -> target
             CreateMap<Platform, PlatformReadDto>();
             CreateMap<PlatformCreateDto, Platform>();
+
+            CreateMap<PlatformPublishedDto, Platform>()
+            // Map Id of PlatformPublishedDto to ExternalId of Platform explicitly
+            .ForMember(dest => dest.ExternalID, opt => opt.MapFrom(src => src.Id));
         }
     }
 }
