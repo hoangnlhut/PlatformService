@@ -13,8 +13,7 @@ namespace PlatformService.AsyncDataServices
             _configuration = configuration;
         }
 
-        public async Task<IConnection> GetConnectionAsync(
-            CancellationToken cancellationToken = default)
+        public async Task<IConnection> GetConnectionAsync()
         {
             if (_connection is { IsOpen: true })
                 return _connection;
@@ -28,9 +27,9 @@ namespace PlatformService.AsyncDataServices
                 RequestedHeartbeat = TimeSpan.FromSeconds(60),
                 NetworkRecoveryInterval =TimeSpan.FromSeconds(5)
             };
+            Console.WriteLine($"--> RabbitMQ connection factory created. Host: {factory.HostName}. Port: {factory.Port}");
 
-            _connection = await factory.CreateConnectionAsync(cancellationToken);
-
+            _connection = await factory.CreateConnectionAsync();
             Console.WriteLine("--> RabbitMQ connection established.");
 
             return _connection;

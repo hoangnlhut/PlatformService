@@ -34,27 +34,29 @@ namespace PlatformService.AsyncDataServices
 
             _channel = await connection.CreateChannelAsync();
 
+            Console.WriteLine("--> RabbitMQ Channel created successfully.");
+
             return _channel;
         }
-        public async void PublishNewPlatform(PlatformPublishedDto platformPublishedDto)
+        public async void  PublishNewPlatform(PlatformPublishedDto platformPublishedDto)
         {
             if(_channel is null || !_channel.IsOpen)
             {
                 _channel = await GetChannelAsync();
             }
 
-            Console.WriteLine("--> RabbitMQ connection open and channel created");
-
             // Declare the Fanout Exchange
             await _channel.ExchangeDeclareAsync(
                 exchange: exchangeName,
-                type: ExchangeType.Fanout,
-                durable: true,
-                autoDelete: false,
-                arguments: null
+                type: ExchangeType.Fanout
+                //durable: true,
+                //autoDelete: false,
+                //arguments: null
             );
 
             // 2. Prepare the payload
+            Console.WriteLine($"[PlatformService] Sending message......");
+
             var messageJson = JsonSerializer.Serialize(platformPublishedDto);
             var body = Encoding.UTF8.GetBytes(messageJson);
 
@@ -62,6 +64,8 @@ namespace PlatformService.AsyncDataServices
             await _channel.BasicPublishAsync(
                 exchange: exchangeName,
                 routingKey: "",
+                //mandatory: false,
+                //basicProperties: null,
                 body: body);
 
             Console.WriteLine($"[PlatformService] Broadcasted: {messageJson}");
