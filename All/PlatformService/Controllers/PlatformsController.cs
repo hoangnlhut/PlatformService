@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PlatformService.AsyncDataServices;
 using PlatformService.Dtos;
 using PlatformService.Models;
 using PlatformService.Repository;
@@ -14,12 +15,12 @@ namespace PlatformService.Controllers
     {
         private readonly IPlatformRepository _repository;
         private readonly IMapper _mapper;
-        private readonly ICommandDataClient _commandDataClient;
+        private readonly IMessageBusClient _messageBusClient;
 
-        public PlatformsController(IPlatformRepository repository, ICommandDataClient commandDataClient, IMapper mapper)
+        public PlatformsController(IPlatformRepository repository, ICommandDataClient commandDataClient, IMapper mapper, IMessageBusClient messageBusClient)
         {
             _repository = repository;
-            _commandDataClient = commandDataClient;
+            _messageBusClient = messageBusClient;
             _mapper = mapper;
         }
 
@@ -52,16 +53,30 @@ namespace PlatformService.Controllers
             _repository.SaveChanges();
             var platformReadDto = _mapper.Map<PlatformReadDto>(platformModel);
 
-            // Call the Command Service to sync the new platform
+            #region Call the Command Service to sync the new platform synchronously - NOT USING NOW
+            //try
+            //{
+            //    await _commandDataClient.SendPlatformToCommand(platformReadDto);
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine($"Could not send SendPlatformToCommand: {ex.Message} - {ex.InnerException?.Message ?? "No inner exception"}");
+            //}
+            #endregion
+
+            #region Send the new platform to the message bus RabbitMQ asynchronously 
             try
             {
-                await _commandDataClient.SendPlatformToCommand(platformReadDto);
+                var platformPublishedDto = _mapper.Map<PlatformPublishedDto>(platformReadDto); platformPublishedDto.Event = "Platform_Published";
+                _messageBusClient.PublishNewPlatform(platformPublishedDto);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Could not send SendPlatformToCommand: {ex.Message} - {ex.InnerException?.Message ?? "No inner exception"}");
+                Console.WriteLine($"Could not send PublishNewPlatform: {ex.Message} - {ex.InnerException?.Message ?? "No inner exception"}");
             }
-           
+            #endregion
+
+
             return CreatedAtRoute(nameof(GetPlatformById), new { id = platformReadDto.Id }, platformReadDto);
         }
     }
