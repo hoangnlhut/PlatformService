@@ -32,6 +32,12 @@ namespace CommandService.Repository
         {
             return _context.Platforms.Any(p => p.Id == platformId);
         }
+
+        public bool ExternalPlatformExists(int externalPlatformId)
+        {
+            return _context.Platforms.Any(p => p.ExternalID == externalPlatformId);
+        }
+
         #endregion
 
         #region Command related methods
