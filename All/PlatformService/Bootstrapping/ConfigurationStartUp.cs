@@ -26,17 +26,18 @@ namespace PlatformService.Bootstrapping
                     opt.UseInMemoryDatabase("InMem"));
             }
 
-            builder.Services.AddScoped<IPlatformRepository, PlatformRepository>();
-
-            builder.Services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>();
-
-            builder.Services.AddSingleton<RabbitMqConnectionProvider>(async serviceProvider =>
+            builder.Services.AddSingleton<RabbitMqConnectionProvider>(serviceProvider =>
             {
                 var config = serviceProvider.GetRequiredService<IConfiguration>();
                 var client = new RabbitMqConnectionProvider(config);
-                await client.GetConnectionAsync();
+                client.GetConnectionAsync().GetAwaiter().GetResult();
+                Console.WriteLine("--> RabbitMqConnectionProvider created successfully.");
                 return client;
             });
+
+            builder.Services.AddScoped<IPlatformRepository, PlatformRepository>();
+
+            builder.Services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>();
 
             builder.Services.AddSingleton<IMessageBusClient, MessageBusClient>();
 
