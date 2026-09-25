@@ -14,7 +14,8 @@ namespace CommandService.Mappers
 
             CreateMap<PlatformPublishedDto, Platform>()
             // Map Id of PlatformPublishedDto to ExternalId of Platform explicitly
-            .ForMember(dest => dest.ExternalID, opt => opt.MapFrom(src => src.Id));
+            .ForMember(dest => dest.ExternalID, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Id, opt => opt.Ignore());
         }
     }
 }
