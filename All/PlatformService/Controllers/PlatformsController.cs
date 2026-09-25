@@ -16,6 +16,7 @@ namespace PlatformService.Controllers
         private readonly IPlatformRepository _repository;
         private readonly IMapper _mapper;
         private readonly IMessageBusClient _messageBusClient;
+        private const string eventTypePlatformPublished = "Platform_Published";
 
         public PlatformsController(IPlatformRepository repository, ICommandDataClient commandDataClient, IMapper mapper, IMessageBusClient messageBusClient)
         {
@@ -67,7 +68,7 @@ namespace PlatformService.Controllers
             #region Send the new platform to the message bus RabbitMQ asynchronously 
             try
             {
-                var platformPublishedDto = _mapper.Map<PlatformPublishedDto>(platformReadDto); platformPublishedDto.Event = "Platform_Published";
+                var platformPublishedDto = _mapper.Map<PlatformPublishedDto>(platformReadDto); platformPublishedDto.Event = eventTypePlatformPublished;
                 _messageBusClient.PublishNewPlatform(platformPublishedDto);
             }
             catch (Exception ex)
