@@ -2,7 +2,7 @@
 
 namespace PlatformService.AsyncDataServices
 {
-    public sealed class RabbitMqConnectionProvider: IAsyncDisposable
+    public sealed class RabbitMqConnectionProvider
     {
         private IConnection? _connection;
         private readonly IConfiguration _configuration;
@@ -33,15 +33,6 @@ namespace PlatformService.AsyncDataServices
             Console.WriteLine("--> RabbitMQ connection established.");
 
             return _connection;
-        }
-
-        public async ValueTask DisposeAsync()
-        {
-            if (_connection != null)
-            {
-                await _connection.CloseAsync();
-                await _connection.DisposeAsync();
-            }
         }
     }
 

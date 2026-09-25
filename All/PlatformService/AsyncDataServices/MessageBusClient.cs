@@ -1,16 +1,16 @@
-﻿using Microsoft.Extensions.Options;
-using PlatformService.Dtos;
+﻿using PlatformService.Dtos;
 using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Channels;
 
 namespace PlatformService.AsyncDataServices
 {
-    public class MessageBusClient : IMessageBusClient
+    public class MessageBusClient : IMessageBusClient, IDisposable
     {
         private readonly RabbitMqConnectionProvider _rabbitMqConnectionProvider;
         private IChannel? _channel;
+        private IConnection? _connection;
         private const string exchangeName = "publish_new_platform_fanout_trigger";
 
         public MessageBusClient(RabbitMqConnectionProvider rabbitMqConnectionProvider)
@@ -23,7 +23,7 @@ namespace PlatformService.AsyncDataServices
             if (_channel is { IsOpen: true })
                 return _channel;
 
-            var connection = await _rabbitMqConnectionProvider.GetConnectionAsync();
+            _connection = await _rabbitMqConnectionProvider.GetConnectionAsync();
 
             //var options = new CreateChannelOptions(
             //        publisherConfirmationsEnabled: true,
@@ -32,15 +32,15 @@ namespace PlatformService.AsyncDataServices
 
             // add options in CreateChannelAsync if needed
 
-            _channel = await connection.CreateChannelAsync();
+            _channel = await _connection.CreateChannelAsync();
 
             Console.WriteLine("--> RabbitMQ Channel created successfully.");
 
             return _channel;
         }
-        public async void  PublishNewPlatform(PlatformPublishedDto platformPublishedDto)
+        public async void PublishNewPlatform(PlatformPublishedDto platformPublishedDto)
         {
-            if(_channel is null || !_channel.IsOpen)
+            if (_channel is null || !_channel.IsOpen)
             {
                 _channel = await GetChannelAsync();
             }
@@ -49,10 +49,12 @@ namespace PlatformService.AsyncDataServices
             await _channel.ExchangeDeclareAsync(
                 exchange: exchangeName,
                 type: ExchangeType.Fanout
-                //durable: true,
-                //autoDelete: false,
-                //arguments: null
+            //durable: true,
+            //autoDelete: false,
+            //arguments: null
             );
+
+            _connection!.ConnectionShutdownAsync += RabbitMQ_ConnectionShutdown;
 
             // 2. Prepare the payload
             Console.WriteLine($"[PlatformService] Sending message......");
@@ -74,17 +76,22 @@ namespace PlatformService.AsyncDataServices
             //Console.WriteLine($"[PlatformService] Disposed channel successfully");
         }
 
-
-        private async ValueTask DisposeAsync()
+        private async Task RabbitMQ_ConnectionShutdown(object sender, ShutdownEventArgs @event)
         {
-            if (_channel is not null)
+            Console.WriteLine($"[PlatformService] RabbitMQ connection shutdown");
+        }
+
+        public async void Dispose()
+        {
+            if (_channel is { IsOpen: true })
             {
                 await _channel.CloseAsync();
+                await _connection!.CloseAsync();
                 await _channel.DisposeAsync();
+                await _connection!.DisposeAsync();
             }
+
+            Console.WriteLine($"[PlatformService] Disposing channel and connection.");
         }
     }
-
-
-
 }
