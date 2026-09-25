@@ -26,6 +26,11 @@ namespace PlatformService.Bootstrapping
                     opt.UseInMemoryDatabase("InMem"));
             }
 
+            builder.Services.AddScoped<IPlatformRepository, PlatformRepository>();
+
+            builder.Services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>();
+
+
             builder.Services.AddSingleton<RabbitMqConnectionProvider>(serviceProvider =>
             {
                 var config = serviceProvider.GetRequiredService<IConfiguration>();
@@ -34,10 +39,6 @@ namespace PlatformService.Bootstrapping
                 Console.WriteLine("--> RabbitMqConnectionProvider created successfully.");
                 return client;
             });
-
-            builder.Services.AddScoped<IPlatformRepository, PlatformRepository>();
-
-            builder.Services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>();
 
             builder.Services.AddSingleton<IMessageBusClient, MessageBusClient>();
 
