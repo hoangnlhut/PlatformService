@@ -2,6 +2,7 @@
 using PlatformService.AsyncDataServices;
 using PlatformService.Data;
 using PlatformService.Repository;
+using PlatformService.SyncDataServices.Grpc;
 using PlatformService.SyncDataServices.Http;
 
 namespace PlatformService.Bootstrapping
@@ -42,7 +43,9 @@ namespace PlatformService.Bootstrapping
 
             builder.Services.AddSingleton<IMessageBusClient, MessageBusClient>();
 
-           
+            // add grpc service
+            builder.Services.AddGrpc();
+
             // Add services to the container.
             builder.Services.AddControllers();
 
@@ -73,8 +76,8 @@ namespace PlatformService.Bootstrapping
 
             app.UseAuthorization();
 
-
             app.MapControllers();
+            app.MapGrpcService<GrpcPlatformService>();
 
             app.PrepPopulation(); // Seed the database with initial data
         }
