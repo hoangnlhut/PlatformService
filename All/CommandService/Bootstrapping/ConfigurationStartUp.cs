@@ -2,6 +2,7 @@
 using CommandService.Data;
 using CommandService.EventProcessing;
 using CommandService.Repository;
+using CommandService.SyncDataServices.Grpc;
 using Microsoft.EntityFrameworkCore;
 
 namespace CommandService.Bootstrapping
@@ -15,6 +16,7 @@ namespace CommandService.Bootstrapping
 
             builder.Services.AddScoped<ICommandRepository, CommandRepository>();
             builder.Services.AddSingleton<IEventProcessor, EventProcessor>();
+            builder.Services.AddScoped<IPlatformDataClient, PlatformDataClient>();
 
             builder.Services.AddHostedService<MessageBusSubscriber>();
 
@@ -46,8 +48,9 @@ namespace CommandService.Bootstrapping
 
             app.UseAuthorization();
 
-
             app.MapControllers();
+
+            app.PrepPopulation().GetAwaiter().GetResult(); // Seed the database with initial data
         }
     }
 }
