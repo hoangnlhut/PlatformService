@@ -18,7 +18,7 @@ namespace CommandService.SyncDataServices.Grpc
         {
             var grpcServiceUrl = _configuration["GrpcPlatform"] ?? throw new ArgumentNullException("GrpcPlatform Url");
 
-            Console.WriteLine($"--> Calling GRPC Service ${grpcServiceUrl}");
+            Console.WriteLine($"--> Calling GRPC Service to get all platforms from ${grpcServiceUrl}");
             
             using var channel = GrpcChannel.ForAddress(grpcServiceUrl);
             var client = new GrpcPlatform.GrpcPlatformClient(channel);
@@ -28,6 +28,9 @@ namespace CommandService.SyncDataServices.Grpc
             try
             {
                var response = await client.GetAllPlatformsAsync(request);
+
+                Console.WriteLine($"--> Received {response.Platforms.Count()} platforms from GRPC Service");
+
                 return response.Platforms.Select(p => _mapper.Map<Platform>(p));
             }
             catch (Exception ex)
