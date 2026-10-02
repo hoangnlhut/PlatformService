@@ -16,10 +16,10 @@ spec:
         - name: platformservice
           image: hoangnguyen260189/platformservice:latest
           ports:
-            - containerPort: 8080
-# REQUIRED!!!!! - make sure you seperate the deployment from the Cluster IP config with: ---
-# you can put it in a separate file if you want, 
-#but make sure to use the --- to separate the two configs  
+            - containerPort: 80
+              name: http
+            - containerPort: 666
+              name: grpc
 ---
 apiVersion: v1
 kind: Service
@@ -32,10 +32,9 @@ spec:
   ports:
     - name: platformservice
       protocol: TCP
-      port: 80  # Port của Service (bên trong Cluster)
-      targetPort: 8080  # Port của Container (.NET 9)
+      port: 80
+      targetPort: 80
     - name: platformgrpc
       protocol: TCP
-      port: 666  # Port của Service (bên trong Cluster)
-      targetPort: 666  # Port của Container 
-    
+      port: 666
+      targetPort: 666
